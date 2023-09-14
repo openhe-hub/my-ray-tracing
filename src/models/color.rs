@@ -14,6 +14,17 @@ impl Color {
         Color { r: 0, g: 0, b: 0 }
     }
 
+    pub fn scale_to_rgb255(r: f32, g: f32, b: f32) -> Color {
+        let ir = (255.999 * r) as u32;
+        let ig = (255.999 * g) as u32;
+        let ib = (255.999 * b) as u32;
+        Color {
+            r: ir,
+            g: ig,
+            b: ib,
+        }
+    }
+
     pub fn r(&self) -> u32 {
         self.r
     }

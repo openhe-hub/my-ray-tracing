@@ -27,16 +27,16 @@ impl Image {
         }
     }
 
-    pub fn get_width(&self) -> u32 {
+    pub fn width(&self) -> u32 {
         self.width
     }
 
-    pub fn get_height(&self) -> u32 {
+    pub fn height(&self) -> u32 {
         self.height
     }
 
-    pub fn set_color(&mut self, color: Color, pos_x: usize, pos_y: usize) {
-        self.content[pos_x][pos_y] = color;
+    pub fn set_color(&mut self, color: Color, pos_x: u32, pos_y: u32) {
+        self.content[pos_x as usize][pos_y as usize] = color;
     }
 
     pub fn export(&self) -> std::io::Result<()> {
