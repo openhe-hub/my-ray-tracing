@@ -24,7 +24,19 @@ impl Ray {
         self.origin + self.dir.scale_mul(t)
     }
 
+    pub fn hit_sphere(&self, center: Point3, radius: f64) -> bool {
+        let center_vec = self.origin - center;
+        let a = self.dir().dot(self.dir());
+        let b = center_vec.dot(self.dir()) * 2.0;
+        let c = center_vec.dot(center_vec) - radius * radius;
+        let delta = b * b - 4.0 * a * c;
+        delta >= 0.0
+    }
+
     pub fn ray_color(&self) -> Color {
+        if self.hit_sphere(Point3::new(0.0, 0.0, -1.0), 0.5) {
+            return Color::scale_to_rgb255(1.0, 0.0, 0.0);
+        }
         let unit_dir: Vec3 = self.dir.unit();
         let a: f64 = 0.5 * (unit_dir.y() + 1.0);
         let scaled_color: Vec3 =
