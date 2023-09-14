@@ -1,4 +1,4 @@
-use std::ops::{Add, Sub, Mul};
+use std::ops::{Add, Mul, Sub};
 
 pub type Point3 = Vec3;
 
@@ -16,6 +16,18 @@ impl Vec3 {
             y: 0.0,
             z: 0.0,
         }
+    }
+
+    pub fn x(&self) -> f64 {
+        self.x
+    }
+
+    pub fn y(&self) -> f64 {
+        self.y
+    }
+
+    pub fn z(&self) -> f64 {
+        self.z
     }
 
     pub fn new(x: f64, y: f64, z: f64) -> Vec3 {
@@ -39,6 +51,14 @@ impl Vec3 {
             x: self.x * scale,
             y: self.y * scale,
             z: self.z * scale,
+        }
+    }
+
+    pub fn unit(self) -> Vec3 {
+        Vec3 {
+            x: self.x / self.length(),
+            y: self.y / self.length(),
+            z: self.z / self.length(),
         }
     }
 
