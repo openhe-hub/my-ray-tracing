@@ -4,6 +4,7 @@ use std::path::Path;
 
 use super::color::Color;
 
+#[derive(Debug)]
 pub struct Image {
     width: u32,
     height: u32,
