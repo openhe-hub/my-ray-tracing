@@ -6,7 +6,7 @@ use crate::utils::math_utils::linear_to_gamma;
 
 use super::vec3::Vec3;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Color {
     r: u32,
     g: u32,
@@ -53,10 +53,18 @@ impl Color {
         self.b = (intensity.clamp(linear_to_gamma(db)) * 256.0) as u32;
     }
 
-    pub fn scale_mul(&mut self, scale: f64){
+    pub fn scale_mul(&mut self, scale: f64) {
         self.r = ((self.r as f64) * scale) as u32;
         self.g = ((self.g as f64) * scale) as u32;
         self.b = ((self.b as f64) * scale) as u32;
+    }
+
+    pub fn color_mul(&self, other: &Color) -> Color {
+        Color {
+            r: self.r * other.r,
+            g: self.g * other.g,
+            b: self.b * other.b,
+        }
     }
 
     pub fn r(&self) -> u32 {

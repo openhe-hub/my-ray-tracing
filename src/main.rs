@@ -1,6 +1,7 @@
 mod models;
 mod shapes;
 mod utils;
+mod materials;
 
 extern crate rand;
 

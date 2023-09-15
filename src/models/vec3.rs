@@ -54,6 +54,14 @@ impl Vec3 {
         }
     }
 
+    pub fn vec_mul(&self, other: &Vec3) -> Vec3 {
+        Vec3 {
+            x: self.x * other.x,
+            y: self.y * other.y,
+            z: self.z * other.z,
+        }
+    }
+
     pub fn unit(self) -> Vec3 {
         Vec3 {
             x: self.x / self.length(),
@@ -68,6 +76,11 @@ impl Vec3 {
 
     pub fn length_squared(self) -> f64 {
         self.x.powi(2) + self.y.powi(2) + self.z.powi(2)
+    }
+
+    pub fn near_zero(&self) -> bool {
+        const MIN_VAL: f64 = 1e-8;
+        (self.x.abs() <= MIN_VAL) && (self.y.abs() <= MIN_VAL) && (self.z.abs() <= MIN_VAL)
     }
 }
 

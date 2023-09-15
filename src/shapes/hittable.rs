@@ -1,22 +1,31 @@
+use crate::materials::lambertian::Lambertian;
+use crate::materials::material::Material;
 use crate::models::ray::Ray;
 use crate::models::vec3::{Point3, Vec3};
 use crate::utils::interval::Interval;
 
-#[derive(Debug, Clone, Copy)]
 pub struct HitRecord {
     p: Point3,
     normal: Vec3,
     t: f64,
     front_face: bool,
+    mat: Box<dyn Material>,
 }
 
 impl HitRecord {
-    pub fn new(p: Point3, normal: Vec3, t: f64, front_face: bool) -> HitRecord {
+    pub fn new(
+        p: Point3,
+        normal: Vec3,
+        t: f64,
+        front_face: bool,
+        mat: Box<dyn Material>,
+    ) -> HitRecord {
         HitRecord {
             p,
             normal,
             t,
             front_face,
+            mat,
         }
     }
 
@@ -26,6 +35,7 @@ impl HitRecord {
             normal: Vec3::empty(),
             t: 0.0,
             front_face: false,
+            mat: Box::new(Lambertian::new()),
         }
     }
 
@@ -48,6 +58,10 @@ impl HitRecord {
 
     pub fn t(&self) -> f64 {
         self.t
+    }
+
+    pub fn mat(&self) -> Box<dyn Material> {
+        self.mat
     }
 
     pub fn set_p(&mut self, p: Point3) {

@@ -101,13 +101,26 @@ impl Camera {
         if depth > self.max_depth {
             return Color::new(0, 0, 0);
         }
-        let mut hit_record: HitRecord = HitRecord::empty();
-        if world.hit(ray, Interval::new(0.001, CONSTANT.INFINITY), &mut hit_record) {
-            let dir: Vec3 = hit_record.normal() + random_unit_vec();
-            let mut next_ray_color: Color =
-                self.ray_color(Ray::new(hit_record.p(), dir), world, depth + 1);
-            next_ray_color.scale_mul(0.2);
-            return next_ray_color;
+        let mut hit_record: HitRecord;
+        if world.hit(
+            ray,
+            Interval::new(0.001, CONSTANT.INFINITY),
+            &mut hit_record,
+        ) {
+            // let dir: Vec3 = hit_record.normal() + random_unit_vec();
+            // let mut next_ray_color: Color =
+            //     self.ray_color(Ray::new(hit_record.p(), dir), world, depth + 1);
+            // next_ray_color.scale_mul(0.2);
+            // return next_ray_color;
+            let mut scattered: Ray = Ray::new(Vec3::empty(), Vec3::empty());
+            let mut attenuation: Color = Color::empty();
+            if hit_record
+                .mat()
+                .scatter(&ray, &hit_record, &mut attenuation, &mut scattered)
+            {
+                return self.ray_color(scattered, world, depth + 1).color_mul(&attenuation);
+            }
+            return Color::new(0, 0, 0);
         }
 
         let unit_dir: Vec3 = ray.dir().unit();
