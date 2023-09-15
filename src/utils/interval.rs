@@ -1,8 +1,8 @@
 use super::common_value::CONSTANT;
 
 pub struct Interval {
-    pub min: f64,
-    pub max: f64,
+    min: f64,
+    max: f64,
 }
 
 impl Interval {
@@ -23,6 +23,14 @@ impl Interval {
 
     pub fn surrounds(&self, x: f64) -> bool {
         return self.min < x && x < self.max;
+    }
+
+    pub fn max(&self) -> f64 {
+        self.max
+    }
+
+    pub fn min(&self) -> f64 {
+        self.min
     }
 }
 
