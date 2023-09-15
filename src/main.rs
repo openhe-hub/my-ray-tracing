@@ -2,6 +2,8 @@ mod models;
 mod shapes;
 mod utils;
 
+extern crate rand;
+
 use models::camera::Camera;
 use models::color::Color;
 use models::image::Image;
