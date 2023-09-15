@@ -8,6 +8,7 @@ use crate::{
     shapes::sphere::Sphere,
     utils::common_value::CONSTANT,
     utils::interval::Interval,
+    utils::random_utils::random_f64,
 };
 
 pub struct Camera {
@@ -18,6 +19,7 @@ pub struct Camera {
     px_delta_v: Vec3,
     px_00: Point3,
     camera_center: Point3,
+    samples_per_px: i32,
 }
 
 impl Camera {
@@ -30,6 +32,7 @@ impl Camera {
             px_delta_v: Vec3::empty(),
             px_00: Point3::empty(),
             camera_center: Point3::empty(),
+            samples_per_px: 0,
         }
     }
 
@@ -67,6 +70,26 @@ impl Camera {
             - viewport_u.scale_mul(0.5)
             - viewport_v.scale_mul(0.5);
         self.px_00 = viewport_00 + (self.px_delta_u + self.px_delta_v).scale_mul(0.5);
+
+        // sample
+        self.samples_per_px = 100;
+    }
+
+    pub fn render(&self, world: &HittableList) -> std::io::Result<()> {
+        let mut img: Image = Image::new(self.image_width, self.image_height);
+        for i in 0..img.height() {
+            for j in 0..img.width() {
+                let mut px_color: Color = Color::new(0, 0, 0);
+                for sample in 0..self.samples_per_px {
+                    let ray: Ray = self.get_ray(i, j);
+                    px_color = px_color + self.ray_color(ray, world);
+                }
+                px_color.sample(self.samples_per_px);
+                img.set_color(px_color, i, j);
+            }
+        }
+        img.export()?;
+        Ok(())
     }
 
     fn ray_color(&self, ray: Ray, world: &HittableList) -> Color {
@@ -83,19 +106,18 @@ impl Camera {
         return Color::scale_vec3_to_rgb255(color_vec);
     }
 
-    pub fn render(&self, world: &HittableList) -> std::io::Result<()> {
-        let mut img: Image = Image::new(self.image_width, self.image_height);
-        for i in 0..img.height() {
-            for j in 0..img.width() {
-                let px_center: Point3 = self.px_00
-                    + self.px_delta_u.scale_mul(j as f64)
-                    + self.px_delta_v.scale_mul(i as f64);
-                let ray_dir: Vec3 = px_center - self.camera_center;
-                let ray: Ray = Ray::new(self.camera_center, ray_dir);
-                img.set_color(self.ray_color(ray, &world), i, j);
-            }
-        }
-        img.export()?;
-        Ok(())
+    fn get_ray(&self, i: u32, j: u32) -> Ray {
+        let px_center: Point3 =
+            self.px_00 + self.px_delta_u.scale_mul(j as f64) + self.px_delta_v.scale_mul(i as f64);
+        let px_sample = px_center + self.px_sample_square();
+        let ray_origin = self.camera_center;
+        let ray_dir = px_sample - ray_origin;
+        return Ray::new(ray_origin, ray_dir);
+    }
+
+    fn px_sample_square(&self) -> Vec3 {
+        let px = -0.5 + random_f64();
+        let py = -0.5 + random_f64();
+        self.px_delta_u.scale_mul(px) + self.px_delta_v.scale_mul(py)
     }
 }
