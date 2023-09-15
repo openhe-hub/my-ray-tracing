@@ -1,5 +1,6 @@
 mod models;
 mod shapes;
+mod utils;
 
 use models::image::Image;
 use models::vec3::{Point3, Vec3};
