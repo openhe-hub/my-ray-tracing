@@ -20,6 +20,7 @@ pub struct Camera {
     px_00: Point3,
     camera_center: Point3,
     samples_per_px: i32,
+    max_depth: i32,
 }
 
 impl Camera {
@@ -33,6 +34,7 @@ impl Camera {
             px_00: Point3::empty(),
             camera_center: Point3::empty(),
             samples_per_px: 0,
+            max_depth: 0,
         }
     }
 
@@ -73,6 +75,9 @@ impl Camera {
 
         // sample
         self.samples_per_px = 100;
+
+        // max depth
+        self.max_depth = 10;
     }
 
     pub fn render(&self, world: &HittableList) -> std::io::Result<()> {
@@ -82,7 +87,7 @@ impl Camera {
                 let mut px_color: Color = Color::new(0, 0, 0);
                 for sample in 0..self.samples_per_px {
                     let ray: Ray = self.get_ray(i, j);
-                    px_color = px_color + self.ray_color(ray, world);
+                    px_color = px_color + self.ray_color(ray, world, 0);
                 }
                 px_color.sample(self.samples_per_px);
                 img.set_color(px_color, i, j);
@@ -92,11 +97,15 @@ impl Camera {
         Ok(())
     }
 
-    fn ray_color(&self, ray: Ray, world: &HittableList) -> Color {
+    fn ray_color(&self, ray: Ray, world: &HittableList, depth: i32) -> Color {
+        if depth > self.max_depth {
+            return Color::new(0, 0, 0);
+        }
         let mut hit_record: HitRecord = HitRecord::empty();
-        if world.hit(ray, Interval::new(0.0, CONSTANT.INFINITY), &mut hit_record) {
+        if world.hit(ray, Interval::new(0.001, CONSTANT.INFINITY), &mut hit_record) {
             let dir: Vec3 = random_vec_on_hemisphere(&hit_record.normal());
-            let mut next_ray_color: Color = self.ray_color(Ray::new(hit_record.p(), dir), world);
+            let mut next_ray_color: Color =
+                self.ray_color(Ray::new(hit_record.p(), dir), world, depth + 1);
             next_ray_color.scale_mul(0.5);
             return next_ray_color;
         }
