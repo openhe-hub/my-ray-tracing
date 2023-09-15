@@ -1,6 +1,6 @@
 mod models;
+mod shapes;
 
-use models::color::Color;
 use models::image::Image;
 use models::vec3::{Point3, Vec3};
 use models::ray::Ray;
