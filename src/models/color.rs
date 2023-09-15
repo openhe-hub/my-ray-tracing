@@ -2,6 +2,8 @@ use std::ops::Add;
 
 use crate::utils::interval::Interval;
 
+use crate::utils::math_utils::linear_to_gamma;
+
 use super::vec3::Vec3;
 
 #[derive(Debug)]
@@ -46,9 +48,9 @@ impl Color {
         let db = b as f64 * scale / 256.0;
 
         let intensity: Interval = Interval::new(0.0, 0.999);
-        self.r = (intensity.clamp(dr) * 256.0) as u32;
-        self.g = (intensity.clamp(dg) * 256.0) as u32;
-        self.b = (intensity.clamp(db) * 256.0) as u32;
+        self.r = (intensity.clamp(linear_to_gamma(dr)) * 256.0) as u32;
+        self.g = (intensity.clamp(linear_to_gamma(dg)) * 256.0) as u32;
+        self.b = (intensity.clamp(linear_to_gamma(db)) * 256.0) as u32;
     }
 
     pub fn scale_mul(&mut self, scale: f64){

@@ -7,7 +7,7 @@ use crate::{
     shapes::hittable_list::HittableList,
     shapes::sphere::Sphere,
     utils::common_value::CONSTANT,
-    utils::random_utils::random_f64,
+    utils::random_utils::{random_f64, random_unit_vec},
     utils::{interval::Interval, random_utils::random_vec_on_hemisphere},
 };
 
@@ -40,7 +40,7 @@ impl Camera {
 
     pub fn init(&mut self) {
         self.aspect_ratio = 16.0 / 9.0;
-        self.image_width = 400;
+        self.image_width = 800;
 
         // calc the img height
         self.image_height = (self.image_width as f64 / self.aspect_ratio) as u32;
@@ -103,10 +103,10 @@ impl Camera {
         }
         let mut hit_record: HitRecord = HitRecord::empty();
         if world.hit(ray, Interval::new(0.001, CONSTANT.INFINITY), &mut hit_record) {
-            let dir: Vec3 = random_vec_on_hemisphere(&hit_record.normal());
+            let dir: Vec3 = hit_record.normal() + random_unit_vec();
             let mut next_ray_color: Color =
                 self.ray_color(Ray::new(hit_record.p(), dir), world, depth + 1);
-            next_ray_color.scale_mul(0.5);
+            next_ray_color.scale_mul(0.2);
             return next_ray_color;
         }
 
