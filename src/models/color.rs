@@ -51,6 +51,12 @@ impl Color {
         self.b = (intensity.clamp(db) * 256.0) as u32;
     }
 
+    pub fn scale_mul(&mut self, scale: f64){
+        self.r = ((self.r as f64) * scale) as u32;
+        self.g = ((self.g as f64) * scale) as u32;
+        self.b = ((self.b as f64) * scale) as u32;
+    }
+
     pub fn r(&self) -> u32 {
         self.r
     }

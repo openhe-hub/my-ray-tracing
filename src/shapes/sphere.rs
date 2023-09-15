@@ -22,7 +22,7 @@ impl Hittable for Sphere {
     fn hit(&self, ray: Ray, ray_t_interval: Interval, hit_record: &mut HitRecord) -> bool {
         let oc: Vec3 = ray.origin() - self.center;
         let a: f64 = ray.dir().length_squared();
-        let half_b: f64 = oc.dot(ray.dir());
+        let half_b: f64 = oc.dot(&ray.dir());
         let c: f64 = oc.length_squared() - self.radius.powf(2.0);
 
         let delta: f64 = half_b.powf(2.0) - a * c;

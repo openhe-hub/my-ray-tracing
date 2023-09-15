@@ -26,9 +26,9 @@ impl Ray {
 
     pub fn hit_sphere(&self, center: Point3, radius: f64) -> f64 {
         let center_vec = self.origin - center;
-        let a = self.dir().dot(self.dir());
-        let b = center_vec.dot(self.dir()) * 2.0;
-        let c = center_vec.dot(center_vec) - radius * radius;
+        let a = self.dir().dot(&self.dir());
+        let b = center_vec.dot(&self.dir()) * 2.0;
+        let c = center_vec.dot(&center_vec) - radius * radius;
         let delta = b * b - 4.0 * a * c;
         if delta < 0.0 {
             return -1.0;

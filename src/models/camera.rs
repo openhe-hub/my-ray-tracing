@@ -7,8 +7,8 @@ use crate::{
     shapes::hittable_list::HittableList,
     shapes::sphere::Sphere,
     utils::common_value::CONSTANT,
-    utils::interval::Interval,
     utils::random_utils::random_f64,
+    utils::{interval::Interval, random_utils::random_vec_on_hemisphere},
 };
 
 pub struct Camera {
@@ -95,8 +95,10 @@ impl Camera {
     fn ray_color(&self, ray: Ray, world: &HittableList) -> Color {
         let mut hit_record: HitRecord = HitRecord::empty();
         if world.hit(ray, Interval::new(0.0, CONSTANT.INFINITY), &mut hit_record) {
-            let color_vec: Vec3 = (hit_record.normal() + Vec3::new(1.0, 1.0, 1.0)).scale_mul(0.5);
-            return Color::scale_vec3_to_rgb255(color_vec);
+            let dir: Vec3 = random_vec_on_hemisphere(&hit_record.normal());
+            let mut next_ray_color: Color = self.ray_color(Ray::new(hit_record.p(), dir), world);
+            next_ray_color.scale_mul(0.5);
+            return next_ray_color;
         }
 
         let unit_dir: Vec3 = ray.dir().unit();
