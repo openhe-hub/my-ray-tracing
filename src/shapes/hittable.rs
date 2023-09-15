@@ -6,11 +6,35 @@ pub struct HitRecord {
     p: Point3,
     normal: Vec3,
     t: f64,
+    front_face: bool,
 }
 
 impl HitRecord {
-    pub fn new(p: Point3, normal: Vec3, t: f64) -> HitRecord {
-        HitRecord { p, normal, t }
+    pub fn new(p: Point3, normal: Vec3, t: f64, front_face: bool) -> HitRecord {
+        HitRecord {
+            p,
+            normal,
+            t,
+            front_face,
+        }
+    }
+
+    pub fn empty() -> HitRecord {
+        HitRecord {
+            p: Point3::empty(),
+            normal: Vec3::empty(),
+            t: 0.0,
+            front_face: false,
+        }
+    }
+
+    pub fn set_face_normal(&mut self, ray: Ray, outward_normal: Vec3) {
+        self.front_face = ray.dir().dot(outward_normal) < 0.0;
+        self.normal = if self.front_face {
+            outward_normal
+        } else {
+            outward_normal.scale_mul(-1.0)
+        };
     }
 
     pub fn p(&self) -> Point3 {
@@ -39,5 +63,5 @@ impl HitRecord {
 }
 
 pub trait Hittable {
-    pub fn hit(&self, ray: Ray, ray_tmin: f64, ray_tmax: f64, hit_record: &mut HitRecord) -> bool;
+    fn hit(&self, ray: Ray, ray_tmin: f64, ray_tmax: f64, hit_record: &mut HitRecord) -> bool;
 }

@@ -2,13 +2,14 @@ use crate::models::vec3::{Point3, Vec3};
 
 use super::hittable::{HitRecord, Hittable};
 
+#[derive(Debug, Clone, Copy)]
 pub struct Sphere {
     center: Point3,
     radius: f64,
 }
 
 impl Hittable for Sphere {
-    pub fn hit(
+    fn hit(
         &self,
         ray: crate::models::ray::Ray,
         ray_tmin: f64,
@@ -21,7 +22,7 @@ impl Hittable for Sphere {
         let c: f64 = oc.length_squared() - self.radius.powf(2.0);
 
         let delta: f64 = half_b.powf(2.0) - a * c;
-        if delta < 0 {
+        if delta < 0.0 {
             return false;
         }
 
@@ -36,8 +37,8 @@ impl Hittable for Sphere {
 
         hit_record.set_t(root);
         hit_record.set_p(ray.at(hit_record.t()));
-        hit_record.set_normal((hit_record.p() - self.center).scale_mul(self.radius));
-
+        let outward_normal: Vec3 = (hit_record.p() - self.center).scale_mul(1.0 / self.radius);
+        hit_record.set_face_normal(ray, outward_normal);
         return true;
     }
 }
