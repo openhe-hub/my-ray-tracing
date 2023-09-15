@@ -46,11 +46,6 @@ impl Camera {
         self.image_height = (self.image_width as f64 / self.aspect_ratio) as u32;
         self.image_height = self.image_height.max(1);
 
-        // world
-        let mut world: HittableList = HittableList::new();
-        world.add(Box::new(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5)));
-        world.add(Box::new(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0)));
-
         // camera
         const focal_length: f64 = 1.0;
         const viewport_height: f64 = 2.0;
@@ -101,7 +96,7 @@ impl Camera {
         if depth > self.max_depth {
             return Color::new(0, 0, 0);
         }
-        let mut hit_record: HitRecord;
+        let mut hit_record: HitRecord = HitRecord::empty();
         if world.hit(
             ray,
             Interval::new(0.001, CONSTANT.INFINITY),
@@ -118,7 +113,11 @@ impl Camera {
                 .mat()
                 .scatter(&ray, &hit_record, &mut attenuation, &mut scattered)
             {
-                return self.ray_color(scattered, world, depth + 1).color_mul(&attenuation);
+                let next_ray_color = self.ray_color(scattered, world, depth + 1);
+                let next_ray_color_vec = Vec3::from_color(next_ray_color);
+                let attenuation_vec = Vec3::from_color(attenuation);
+                let result_color_vec = next_ray_color_vec.vec_mul(&attenuation_vec);
+                return Color::scale_vec3_to_rgb255(result_color_vec);
             }
             return Color::new(0, 0, 0);
         }

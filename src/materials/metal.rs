@@ -10,9 +10,9 @@ pub struct Metal {
 }
 
 impl Metal {
-    pub fn new() -> Metal {
+    pub fn new(color: Color) -> Metal {
         Metal {
-            color: Color::empty(),
+            color
         }
     }
 }
@@ -29,5 +29,9 @@ impl Material for Metal {
         *scattered = Ray::new(hit_record.p(), reflected);
         *attenuation = self.color;
         true
+    }
+
+    fn my_clone(&self) -> Box<dyn Material> {
+        Box::new(Metal::new(self.color))
     }
 }

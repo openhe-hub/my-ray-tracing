@@ -1,5 +1,6 @@
 use crate::materials::lambertian::Lambertian;
 use crate::materials::material::Material;
+use crate::models::color::Color;
 use crate::models::ray::Ray;
 use crate::models::vec3::{Point3, Vec3};
 use crate::utils::interval::Interval;
@@ -35,7 +36,7 @@ impl HitRecord {
             normal: Vec3::empty(),
             t: 0.0,
             front_face: false,
-            mat: Box::new(Lambertian::new()),
+            mat: Box::new(Lambertian::new(Color::empty())),
         }
     }
 
@@ -61,7 +62,7 @@ impl HitRecord {
     }
 
     pub fn mat(&self) -> Box<dyn Material> {
-        self.mat
+        self.mat.my_clone()
     }
 
     pub fn set_p(&mut self, p: Point3) {
@@ -74,6 +75,10 @@ impl HitRecord {
 
     pub fn set_t(&mut self, t: f64) {
         self.t = t;
+    }
+
+    pub fn set_mat(&mut self, mat: Box<dyn Material>) {
+        self.mat = mat;
     }
 }
 

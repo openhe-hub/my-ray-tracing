@@ -60,6 +60,7 @@ impl Color {
     }
 
     pub fn color_mul(&self, other: &Color) -> Color {
+        println!("self = {:?}, other = {:?}", self, other);
         Color {
             r: self.r * other.r,
             g: self.g * other.g,

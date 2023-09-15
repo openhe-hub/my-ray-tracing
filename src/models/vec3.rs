@@ -1,5 +1,7 @@
 use std::ops::{Add, Mul, Sub};
 
+use super::color::Color;
+
 pub type Point3 = Vec3;
 
 #[derive(Debug, Clone, Copy)]
@@ -32,6 +34,14 @@ impl Vec3 {
 
     pub fn new(x: f64, y: f64, z: f64) -> Vec3 {
         Vec3 { x, y, z }
+    }
+
+    pub fn from_color(color: Color) -> Vec3 {
+        Vec3 {
+            x: color.r() as f64 / 256.0,
+            y: color.g() as f64 / 256.0,
+            z: color.b() as f64 / 256.0,
+        }
     }
 
     pub fn dot(self, other: &Vec3) -> f64 {

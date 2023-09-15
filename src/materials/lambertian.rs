@@ -10,10 +10,8 @@ pub struct Lambertian {
 }
 
 impl Lambertian {
-    pub fn new() -> Lambertian {
-        Lambertian {
-            color: Color::empty(),
-        }
+    pub fn new(color: Color) -> Lambertian {
+        Lambertian { color }
     }
 }
 
@@ -32,5 +30,9 @@ impl Material for Lambertian {
         *scattered = Ray::new(hit_record.p(), scatter_dir);
         *attenuation = self.color;
         true
+    }
+
+    fn my_clone(&self) -> Box<dyn Material> {
+        Box::new(Lambertian::new(self.color))
     }
 }
